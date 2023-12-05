@@ -1,34 +1,154 @@
+import { useSelector, useDispatch } from "react-redux"
+import { addToCart, removeFromCart, removeSingle, emptyCart } from "../redux/features/CartSlice";
+import { useState, useEffect } from "react";
 
-function CartDetails({ items }: any) {
+function CartDetails() {
+    const { cart }: any = useSelector((state) => state)
+    const dispatch = useDispatch()
+
+    const handleEmptyCart = () => {
+        dispatch(emptyCart())
+    }
+    const data = cart.carts;
     return (
         <>
-            <div className=" w-[290px] h-[400px] bg-black text-white rounded-lg p-1 ">
-                <div className="w-[280px] h-[250px] rounded-lg my-2">
-                    <img src={items.imgdata} alt={items.dish} className="w-[100%] h-[100%] rounded-lg " />
-                </div>
-                <div className="flex justify-between px-2 h-auto">
-                    <p className="font-bold ">{items.dish}</p>
-                    <p className="bg-green-600 rounded-md px-2 text-sm font-bold text-center">{items.rating} <span> <i className="fa-solid fa-star" style={{ color: 'white', fontSize: 11 }}></i></span></p>
-                </div>
-                <div className="flex justify-between px-2 text-sm ">
-                    <p>{items.address} </p>
-                    <p className="text-green-500 font-bold">{items.price} ₹</p>
-                </div>
-                <div className="w-auto h-[1px] bg-white mx-2 "></div>
-                <div className="flex justify-around px-2 my-3 items-center">
-                    <div>
-                        <img src={items.arrimg} alt="arrImage" className="w-[20px] h-[20px]" />
+            <section className="flex justify-center h-[90vh] w-screen ">
+                <div className="w-full px-1 md:px-0 md:w-[60%]  mt-[100px] rounded-md ">
+                    <div className="bg-[#110c4d] text-white flex justify-between items-center px-5 h-[70px] rounded-t-md ">
+                        <p className="font-bold text-lg md:text-2xl mt-3">Cart Calculation ({data.length})</p>
+                        {data.length > 0 ? <button onClick={handleEmptyCart} className="bg-red-500 text-sm font-bold px-2 py-2 rounded-md"><span><i className="fa-solid fa-trash" style={{ color: '#ffffff' }}></i></span> Empty Cart</button> : null}
                     </div>
-                    <div>
-                        <button className="bg-cyan-500 text-white bottom-0 font-bold rounded-md px-6 hover:drop-shadow-md ">Add To Cart</button>
+                    <div className="border-[#110c4d] border-1 rounded-b-md">
+
+                        {data.length !== 0 ? <>
+                            <div className="relative overflow-x-auto shadow-md sm:rounded-b-md">
+                                <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                                    <TableHeader />
+                                    {
+                                        data.map((item: any) => <>
+                                            <TableBody item={item} />
+                                        </>)
+                                    }
+                                    <TableFooter item={data} />
+                                </table>
+                            </div>
+
+                        </>
+                            : <div className="flex flex-col justify-center items-center h-[200px]">
+                                <span><i className="fa-solid fa-cart-shopping" style={{ color: '#bdd5ff', fontSize: 30 }}></i></span>
+                                <p className="text-[#bdd5ff] text-2xl">Your Cart Is Empty</p>
+                            </div>}
+
                     </div>
-                    <div>
-                        <img src={items.delimg} alt="delImg" className="w-[45px] h-[15px]"/>
-                    </div>
+
                 </div>
-            </div>
+            </section >
         </>
     )
+}
+
+
+const TableBody = ({ item }: any) => {
+    const dispatch = useDispatch();
+    const handleAdditem = (item: any) => {
+        dispatch(addToCart(item))
+    }
+    const handleRemoveitem = (item: any) => {
+        dispatch(removeFromCart(item))
+    }
+
+    const handleRemoveSingleitems = (items: any) => {
+        dispatch(removeSingle(items))
+    }
+    return (<>
+        <tbody className="bg-[#1F2937]">
+            <tr className="border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                <td className="px-8">
+                    <span className="bg-red-200 p-2 px-3 rounded-md " onClick={() => { handleRemoveitem(item) }}>
+                        <i className="fa-solid fa-trash" style={{ color: '#f73b3b' }}></i>
+                    </span>
+                </td>
+                <td className="p-4">
+                    <img src={item.imgdata} className="w-16 max-w-full h-16 max-h-full" alt="Apple Watch" />
+                </td>
+                <td className="px-6 py-4 font-semibold text-gray-100 dark:text-whitey">{item.dish}</td>
+                <td className="px-7 text-green-500 font-medium">{item.price}</td>
+                <td className="px-4 py-4">
+                    <div className="flex items-center w-32">
+                        <button type="button" onClick={() => { item.qnty > 1 ? handleRemoveSingleitems(item) : handleRemoveitem(item) }}>
+                            <span className="px-2 py-2">
+                                <i className="fa-solid fa-minus"></i>
+                            </span>
+
+                        </button>
+                        <div >
+                            <input type="number" id="first_product" className="bg-gray-50 w-16 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block px-2.5 py-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required value={item.qnty} />
+                        </div>
+                        <button type="button" onClick={() => { handleAdditem(item) }}>
+                            <span className="px-2 py-2">
+                                <i className="fa-solid fa-plus"></i>
+                            </span>
+
+                        </button>
+                    </div>
+                </td>
+                <td className="px-14 font-semibold text-green-500">{item.qnty * item.price}</td>
+            </tr>
+        </tbody>
+    </>)
+}
+
+
+const TableHeader = () => <>
+    <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+        <tr>
+            <th scope="col" className="px-4 py-3">Action</th>
+            <th scope="col" className="px-6 py-3">Product</th>
+            <th scope="col" className="px-6 py-3">Name</th>
+            <th scope="col" className="px-6 py-3">Price</th>
+            <th scope="col" className="px-20 py-3">Qty</th>
+            <th scope="col" className="px-6 py-3">Total Amount</th>
+        </tr>
+    </thead>
+
+</>
+
+const TableFooter = ({ item }: any) => {
+    const { cart }: any = useSelector((state) => state)
+    console.log(cart)
+    const [totalPrice, setTotalAmount] = useState()
+    const [totalqnty, setTotalqnty] = useState()
+    console.log(totalPrice)
+
+    const total = () => {
+        let totalAmount: any = 0;
+        let totalqnty: any = 0
+        cart.carts.map((item: any) => {
+            totalAmount += item.price * item.qnty
+            totalqnty += item.qnty;
+        })
+
+        setTotalAmount(totalAmount)
+        setTotalqnty(totalqnty)
+
+    }
+    useEffect(() => {
+        total()
+    }, [total])
+
+
+    return <>
+        <tfoot className="bg-black">
+            <tr className="font-semibold text-gray-900 dark:text-white">
+                <th scope="row" className="px-6 py-3 text-base">Total </th>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td className="px-20 py-3 text-red-500">{totalqnty}</td>
+                <td className="px-12 py-3 text-red-500">{totalPrice}</td>
+            </tr>
+        </tfoot>
+    </>
 }
 
 export default CartDetails
