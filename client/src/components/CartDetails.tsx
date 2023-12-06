@@ -1,6 +1,7 @@
 import { useSelector, useDispatch } from "react-redux"
 import { addToCart, removeFromCart, removeSingle, emptyCart } from "../redux/features/CartSlice";
 import { useState, useEffect } from "react";
+import { loadStripe } from "@stripe/stripe-js";
 
 function CartDetails() {
     const { cart }: any = useSelector((state) => state)
@@ -73,7 +74,7 @@ const TableBody = ({ item }: any) => {
                 </td>
                 <td className="px-6 py-4 font-semibold text-gray-100 dark:text-whitey">{item.dish}</td>
                 <td className="px-7 text-green-500 font-medium">{item.price}</td>
-                <td className="px-4 py-4">
+                <td className="flex justify-center px-1 py-10">
                     <div className="flex items-center w-32">
                         <button type="button" onClick={() => { item.qnty > 1 ? handleRemoveSingleitems(item) : handleRemoveitem(item) }}>
                             <span className="px-2 py-2">
@@ -113,12 +114,17 @@ const TableHeader = () => <>
 
 </>
 
+
+
+// Table Footer 
+
 const TableFooter = ({ item }: any) => {
     const { cart }: any = useSelector((state) => state)
-    console.log(cart)
+    console.log(cart.carts)
+
     const [totalPrice, setTotalAmount] = useState()
     const [totalqnty, setTotalqnty] = useState()
-    console.log(totalPrice)
+
 
     const total = () => {
         let totalAmount: any = 0;
@@ -132,6 +138,33 @@ const TableFooter = ({ item }: any) => {
         setTotalqnty(totalqnty)
 
     }
+
+    const handleCheckOut = async () => {
+        const stripe = await loadStripe("pk_test_51OKEkzSBQyUaDqXv2DyLA9GXPsaztZZ6y9jB7eCsS5BQVpNxEn0Q8wc4P42WRpegSn5eMYlTEGFwiYc9AeKzaqSQ00aV4OnfGr");
+        const body = {
+            products: cart.carts
+        }
+        const headers = {
+            "Content-Type": "application/json"
+        }
+
+        const response = await fetch('http://localhost:7000/api/create-checkout-session', {
+            method: 'POST',
+            headers: headers,
+            body: JSON.stringify(body)
+        })
+
+        const session = await response.json()
+
+        const result: any = stripe?.redirectToCheckout({
+            sessionId: session.id
+        })
+
+        if (result.error) {
+            console.log(result.error)
+        }
+    }
+
     useEffect(() => {
         total()
     }, [total])
@@ -144,8 +177,16 @@ const TableFooter = ({ item }: any) => {
                 <td></td>
                 <td></td>
                 <td></td>
-                <td className="px-20 py-3 text-red-500">{totalqnty}</td>
-                <td className="px-12 py-3 text-red-500">{totalPrice}</td>
+                <td className="flex justify-center items-center p-2 py-4 text-red-500">{totalqnty}</td>
+                <td className=" px-14 py-3 text-red-500">{totalPrice}</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td className="flex justify-center p-2"><button className="px-4 bg-green-500 text-white font-bold border-0 rounded-md py-2" onClick={handleCheckOut}>CheckOut</button></td>
             </tr>
         </tfoot>
     </>
