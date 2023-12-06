@@ -120,7 +120,6 @@ const TableHeader = () => <>
 
 const TableFooter = ({ item }: any) => {
     const { cart }: any = useSelector((state) => state)
-    console.log(cart.carts)
 
     const [totalPrice, setTotalAmount] = useState()
     const [totalqnty, setTotalqnty] = useState()
@@ -140,6 +139,7 @@ const TableFooter = ({ item }: any) => {
     }
 
     const handleCheckOut = async () => {
+        console.log("clicked")
         const stripe = await loadStripe("pk_test_51OKEkzSBQyUaDqXv2DyLA9GXPsaztZZ6y9jB7eCsS5BQVpNxEn0Q8wc4P42WRpegSn5eMYlTEGFwiYc9AeKzaqSQ00aV4OnfGr");
         const body = {
             products: cart.carts
@@ -148,17 +148,24 @@ const TableFooter = ({ item }: any) => {
             "Content-Type": "application/json"
         }
 
-        const response = await fetch('http://localhost:7000/api/create-checkout-session', {
+        const response = await fetch('http://localhost:7000/api/stripepay/create-checkout-session', {
             method: 'POST',
             headers: headers,
             body: JSON.stringify(body)
         })
 
+        // console.log(response)
+
         const session = await response.json()
+
+
+
+        console.log(session)
 
         const result: any = stripe?.redirectToCheckout({
             sessionId: session.id
         })
+        // console.log(result)
 
         if (result.error) {
             console.log(result.error)
@@ -186,7 +193,7 @@ const TableFooter = ({ item }: any) => {
                 <td></td>
                 <td></td>
                 <td></td>
-                <td className="flex justify-center p-2"><button className="px-4 bg-green-500 text-white font-bold border-0 rounded-md py-2" onClick={handleCheckOut}>CheckOut</button></td>
+                <td className="flex justify-center p-2"><button className="px-4 bg-green-500 text-white font-bold border-0 rounded-md py-2" onClick={() => { handleCheckOut() }}>CheckOut</button></td>
             </tr>
         </tfoot>
     </>
