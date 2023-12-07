@@ -2,21 +2,14 @@ import stripe from 'stripe';
 import dotenv from 'dotenv';
 dotenv.config();
 
-const Secret_KEY=process.env.Stripe_Secrete
-
-console.log(Secret_KEY)
-
+const Secret_KEY = process.env.Stripe_Secrete;
 const Stripe = stripe(Secret_KEY)
-
-
 
 export default async function StripeMethod(req, res, next) {
     try {
         console.log('data')
         console.log(process.env.Stripe_Secrete)
         const { products } = req.body;
-
-
 
         const linItems = products.map((product) => ({
             price_data: {
@@ -29,8 +22,6 @@ export default async function StripeMethod(req, res, next) {
             quantity: product.qnty
         }))
 
-        console.log(linItems)
-
 
         const session = await Stripe.checkout.sessions.create(
             {
@@ -42,7 +33,6 @@ export default async function StripeMethod(req, res, next) {
             }
         );
 
-        console.log(session.id)
         return res.json({ id: session.id })
 
     } catch (err) {

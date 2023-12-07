@@ -124,7 +124,7 @@ const TableFooter = ({ item }: any) => {
     const [totalPrice, setTotalAmount] = useState()
     const [totalqnty, setTotalqnty] = useState()
 
-    const Stripe_KEY = JSON.stringify(import.meta.env.VITE_REACT_APP_STRIPE_PUBLIC_KEY)
+    const Stripe_KEY = import.meta.env.VITE_REACT_APP_STRIPE_PUBLIC_KEY
 
 
     useEffect(() => { }, [Stripe_KEY])
@@ -157,18 +157,11 @@ const TableFooter = ({ item }: any) => {
             body: JSON.stringify(body)
         })
 
-        // console.log(response)
-
         const session = await response.json()
-
-
-
-        console.log(session)
-
         const result: any = stripe?.redirectToCheckout({
             sessionId: session.id
         })
-        // console.log(result)
+
 
         if (result.error) {
             console.log(result.error)
