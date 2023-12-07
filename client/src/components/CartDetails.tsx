@@ -124,7 +124,10 @@ const TableFooter = ({ item }: any) => {
     const [totalPrice, setTotalAmount] = useState()
     const [totalqnty, setTotalqnty] = useState()
 
+    const Stripe_KEY = JSON.stringify(import.meta.env.VITE_REACT_APP_STRIPE_PUBLIC_KEY)
 
+
+    useEffect(() => { }, [Stripe_KEY])
     const total = () => {
         let totalAmount: any = 0;
         let totalqnty: any = 0
@@ -140,7 +143,7 @@ const TableFooter = ({ item }: any) => {
 
     const handleCheckOut = async () => {
         console.log("clicked")
-        const stripe = await loadStripe("pk_test_51OKEkzSBQyUaDqXv2DyLA9GXPsaztZZ6y9jB7eCsS5BQVpNxEn0Q8wc4P42WRpegSn5eMYlTEGFwiYc9AeKzaqSQ00aV4OnfGr");
+        const stripe = await loadStripe(Stripe_KEY);
         const body = {
             products: cart.carts
         }
