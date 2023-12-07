@@ -1,5 +1,6 @@
 import stripe from 'stripe';
-const Stripe = stripe('sk_test_51OKEkzSBQyUaDqXvuzzuHAPG5n6BExlOWq5ne3yJ3zFfMc34eLQHNaACR6mXDdQgNIWPkEKtsWjI6Eej63ziGAKC004c0qGLcM')
+
+const Stripe = stripe(process.env.Stripe_Secrete)
 
 export default async function StripeMethod(req, res, next) {
     try {
