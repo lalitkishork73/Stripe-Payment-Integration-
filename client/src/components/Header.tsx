@@ -4,7 +4,7 @@ import { useSelector } from "react-redux"
 function Header() {
 
     const { cart }: any = useSelector((state) => state)
-    console.log(cart.carts.length)
+
     return (
         <nav className="flex bg-black text-white h-[60px] justify-around">
             <div>
