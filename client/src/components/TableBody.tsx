@@ -16,17 +16,17 @@ const TableBody = ({ item }: any) => {
     return (<>
         <tbody className="bg-[#1F2937]">
             <tr className="border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                <td className="px-8">
+                <td className="px-8 text-center">
                     <span className="bg-red-200 p-2 px-3 rounded-md " onClick={() => { handleRemoveitem(item) }}>
                         <i className="fa-solid fa-trash" style={{ color: '#f73b3b' }}></i>
                     </span>
                 </td>
-                <td className="p-4">
+                <td className="p-4 text-center">
                     <img src={item.imgdata} className="w-16 max-w-full h-16 max-h-full" alt="Apple Watch" />
                 </td>
-                <td className="px-6 py-4 font-semibold text-gray-100 dark:text-whitey">{item.dish}</td>
-                <td className="px-7 text-green-500 font-medium">{item.price}</td>
-                <td className="flex justify-center px-1 py-10">
+                <td className="px-6 py-4 font-semibold text-gray-100 dark:text-whitey text-center">{item.dish}</td>
+                <td className="px-7 text-green-500 font-medium text-center">{item.price}</td>
+                <td className="flex justify-center px-1 py-10 text-center">
                     <div className="flex items-center w-32">
                         <button type="button" onClick={() => { item.qnty > 1 ? handleRemoveSingleitems(item) : handleRemoveitem(item) }}>
                             <span className="px-2 py-2">
@@ -45,7 +45,7 @@ const TableBody = ({ item }: any) => {
                         </button>
                     </div>
                 </td>
-                <td className="px-14 font-semibold text-green-500">{item.qnty * item.price}</td>
+                <td className="px-14 font-semibold text-green-500 text-center">{item.qnty * item.price}</td>
             </tr>
         </tbody>
     </>)
